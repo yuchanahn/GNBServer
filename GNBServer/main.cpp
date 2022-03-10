@@ -50,7 +50,6 @@ int main()
     strand_run(stop);
     yc_net::bind_ev<p_chat_message_t>([&](p_chat_message_t* chat, yc::socket_t socket) {
         wprintf(std::format(L"SOCKET : {} - {}\n", socket, chat->msg).c_str());
-        p_chat_message_t p;
         std::wstring s;
         s.assign(users[socket].begin(), users[socket].end());
         s.append(L" : ");
@@ -60,6 +59,33 @@ int main()
             yc_net::send(chat, i.first);
         }
         });
+
+    auto send_all_user = [&](yc::socket_t sock) {
+        p_chat_message_t p { };
+        std::wstring s;
+        s.assign(users[sock].begin(), users[sock].end());
+        s.append(L"님이 SSR 등급 캐릭터를 뽑았습니다!");
+        std::copy(s.begin(), s.end(), p.msg);
+        for (auto& i : users) {
+            yc_net::send(&p, i.first);
+        }
+    };
+
+
+    yc_net::bind_ev<p_gacha_start_t>([&](p_gacha_start_t* gacha, yc::socket_t socket) {
+        
+        p_gacha_result_t gr;
+        for (int i = 0; i < gacha->cnt; i++) {
+            gr.r[i] = rand() % 100;
+            wprintf(std::format(L"SOCKET : {}, gacha : {}\n", socket, (int)gr.r[i]).c_str());
+            if (gr.r[i] < 10) send_all_user(socket);
+        }
+
+        yc_net::send(&gr, socket);
+
+        });
+
+
 
     //yc_net::add_sync_worker(w, loop);
 
