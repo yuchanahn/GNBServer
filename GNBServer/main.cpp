@@ -80,6 +80,7 @@ int main()
             wprintf(std::format(L"SOCKET : {}, gacha : {}\n", socket, (int)gr.r[i]).c_str());
             if (gr.r[i] < 10) send_all_user(socket);
         }
+        gr.size = gacha->cnt;
 
         yc_net::send(&gr, socket);
 
