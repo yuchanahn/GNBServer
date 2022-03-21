@@ -318,7 +318,6 @@ unsigned int __stdcall CompletionThread(LPVOID pComPort)
                     if (!(clnts[c_code].is_active)) {
                         return;
                     }
-
                     try
                     {
                         clnts[c_code].packet_reader.read((unsigned char*)in_io_data->buffer, len, sock);

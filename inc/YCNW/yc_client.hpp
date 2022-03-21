@@ -7,7 +7,6 @@
 #include "yc_packet.hpp"
 #include <winsock2.h>
 
-class yc_read_manager;
 class yc_client
 {
 	SOCKET socket;
@@ -70,7 +69,11 @@ int yc_client::read_packet()
 	else if (received == 0)
 		return 0;
 
-	r->read((unsigned char*)buf, received);
+	std::vector<char> b;
+	for (int i = 0; i < received; i++)
+		b.push_back(buf[i]);
+
+	r->read(b, received);
 
 	return 1;
 }
